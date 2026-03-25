@@ -10,6 +10,22 @@ Client → Sidecar (port 8080) → Backend (port 9090)
               └── anything else      → forwarded to backend as-is
 ```
 
+## Contents
+
+- [Why this exists](#why-this-exists)
+- [Get it running](#get-it-running)
+- [How the merge works](#how-the-merge-works)
+- [Merge modes](#merge-modes)
+- [Plugins](#plugins)
+- [Configuration](#configuration)
+- [Full configuration reference](#full-configuration-reference)
+- [Tests](#tests)
+- [Sample /service-info output](#sample-service-info-output)
+- [Performance](#performance)
+- [Layout](#layout)
+- [Full project structure (GSoC target)](#full-project-structure-gsoc-target)
+- [License](#license)
+
 ## Why this exists
 
 Every GA4GH implementation handles `/service-info` differently. Funnel returns one shape, Cromwell another, TESK another. If you run three services, you get three inconsistent responses and three config files to keep in sync.
