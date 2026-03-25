@@ -190,6 +190,35 @@ pytest tests/ -v
 
 25 tests, under a second. Config loading, merge precedence, plugin ordering, mock backend integration.
 
+## Sample /service-info output
+
+With the sidecar in front of the mock TES backend:
+
+```json
+{
+  "id": "org.ga4gh.demo.tes",
+  "name": "GA4GH Demo TES (via Sidecar)",
+  "type": {
+    "group": "org.ga4gh",
+    "artifact": "tes",
+    "version": "1.1.0"
+  },
+  "organization": {
+    "name": "GA4GH Demo Institute",
+    "url": "https://demo.ga4gh.org"
+  },
+  "contactUrl": "mailto:ops@demo.ga4gh.org",
+  "environment": "development",
+  "version": "2.0.0",
+  "storage": ["s3", "ftp", "file"],
+  "description": "A TES endpoint protected by the GA4GH ServiceInfo Sidecar.",
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2026-03-02T12:15:00+00:00"
+}
+```
+
+`id`, `name`, `organization`, and `contactUrl` come from the sidecar config. `storage` and `createdAt` come from the backend. The `type` object is recursively merged.
+
 ## Performance
 
 Benchmarks run on MacBook Pro, localhost, `hey` 1000 requests 10 concurrent.
