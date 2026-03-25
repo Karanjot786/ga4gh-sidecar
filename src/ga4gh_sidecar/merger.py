@@ -180,10 +180,12 @@ class ServiceInfoCache:
     @property
     def last_fetch_age_seconds(self) -> float | None:
         """Seconds since the last successful backend fetch, or None if never fetched."""
-        if self._last_poll is None:
+        last_poll = self._last_poll
+        if last_poll is None:
             return None
-        delta = datetime.now(timezone.utc) - self._last_poll
-        return round(delta.total_seconds(), 1)
+        delta = datetime.now(timezone.utc) - last_poll
+        seconds = delta.total_seconds()
+        return int(seconds * 10) / 10
 
     @property
     def is_backend_healthy(self) -> bool:
@@ -202,10 +204,11 @@ class ServiceInfoCache:
 
     async def stop_polling(self) -> None:
         """Stop the background polling loop."""
-        if self._poll_task:
-            self._poll_task.cancel()
+        task = self._poll_task
+        if task is not None:
+            task.cancel()
             try:
-                await self._poll_task
+                await task
             except asyncio.CancelledError:
                 pass
 

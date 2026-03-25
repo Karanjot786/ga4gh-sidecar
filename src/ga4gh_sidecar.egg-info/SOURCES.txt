@@ -16,6 +16,7 @@ src/ga4gh_sidecar/plugins/__init__.py
 src/ga4gh_sidecar/plugins/base.py
 src/ga4gh_sidecar/plugins/tes.py
 src/ga4gh_sidecar/plugins/wes.py
+tests/test_cache_state.py
 tests/test_config.py
 tests/test_integration.py
 tests/test_merger.py

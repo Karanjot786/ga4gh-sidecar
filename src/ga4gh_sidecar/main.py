@@ -12,7 +12,6 @@ import os
 import sys
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any
 
 import httpx
 import uvicorn
@@ -42,8 +41,9 @@ class JsonFormatter(logging.Formatter):
             "logger": record.name,
             "message": record.getMessage(),
         }
-        if record.exc_info and record.exc_info[1]:
-            entry["exception"] = self.formatException(record.exc_info)
+        exc_info = record.exc_info
+        if exc_info is not None and exc_info[1] is not None:
+            entry["exception"] = self.formatException(exc_info)
         return json.dumps(entry)
 
 
@@ -80,7 +80,7 @@ def _build_plugin_chain(config: SidecarConfig) -> PluginChain:
     chain = PluginChain()
     for entry in config.plugins:
         plugin_cls = BUILTIN_PLUGINS.get(entry.name)
-        if plugin_cls:
+        if plugin_cls is not None:
             chain.add(plugin_cls())
             logger.info(f"Loaded plugin: {entry.name}")
         else:
@@ -166,7 +166,7 @@ app.add_middleware(
 
 
 @app.get("/service-info")
-async def get_service_info() -> dict[str, Any]:
+async def get_service_info():
     """Return the merged /service-info response.
 
     This response is a combination of:

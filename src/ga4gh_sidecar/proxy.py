@@ -6,6 +6,8 @@ streaming the response body and handling headers correctly.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 import httpx
 from fastapi import Request, Response
 
@@ -22,13 +24,9 @@ HOP_BY_HOP_HEADERS: set[str] = {
 }
 
 
-def _filter_headers(headers: httpx.Headers | dict) -> dict[str, str]:
-    """Remove hop-by-hop headers from a header dict."""
-    return {
-        k: v
-        for k, v in (headers.items() if hasattr(headers, "items") else headers)
-        if k.lower() not in HOP_BY_HOP_HEADERS
-    }
+def _filter_headers(headers: Mapping[str, str]) -> dict[str, str]:
+    """Remove hop-by-hop headers from a header mapping."""
+    return {k: v for k, v in headers.items() if k.lower() not in HOP_BY_HOP_HEADERS}
 
 
 async def reverse_proxy(
