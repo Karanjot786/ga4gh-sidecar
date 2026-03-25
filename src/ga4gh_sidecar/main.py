@@ -78,6 +78,16 @@ async def lifespan(app: FastAPI):
     plugin_configs = {p.name: p.config for p in _config.plugins}
     await _plugin_chain.startup_all(plugin_configs)
 
+    # Create a persistent httpx client for backend polling
+    _poll_client = httpx.AsyncClient(
+        timeout=_config.merge.backend_timeout_seconds,
+        limits=httpx.Limits(
+            max_connections=10,
+            max_keepalive_connections=5,
+            keepalive_expiry=30,
+        ),
+    )
+
     # Create the service info cache with background polling
     _cache = ServiceInfoCache(
         sidecar_config=_config.service_info.to_dict(),
@@ -89,8 +99,15 @@ async def lifespan(app: FastAPI):
     _cache.set_plugins(_plugin_chain.plugins)
     await _cache.start_polling()
 
-    # Create a persistent httpx client for proxying
-    _proxy_client = httpx.AsyncClient(timeout=30.0)
+    # Create a persistent httpx client for proxying with connection pooling
+    _proxy_client = httpx.AsyncClient(
+        timeout=30.0,
+        limits=httpx.Limits(
+            max_connections=100,
+            max_keepalive_connections=20,
+            keepalive_expiry=30,
+        ),
+    )
 
     logger.info(
         f"Sidecar started — listening on :{_config.listen_port}, "
