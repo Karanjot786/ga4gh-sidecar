@@ -204,7 +204,7 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-25 tests, under a second. Config loading, merge precedence, plugin ordering, mock backend integration.
+33 tests, under a second. Config loading, merge precedence, plugin ordering, mock backend integration.
 
 ## Sample /service-info output
 
@@ -263,9 +263,13 @@ The `/service-info` path serves a cached in-memory response with no backend call
 ├── mock_backend/
 │   └── app.py           # mock TES for testing
 ├── tests/               # pytest suite
+├── .github/
+│   └── workflows/
+│       └── ci.yml       # GitHub Actions CI pipeline
 ├── config.yaml          # example config
 ├── Dockerfile           # multi-stage, non-root
 ├── docker-compose.yml   # sidecar + mock backend
+├── LICENSE              # Apache 2.0
 └── pyproject.toml
 ```
 
@@ -297,14 +301,18 @@ ga4gh-sidecar/
 ├── schemas/
 │   ├── service-info-1.0.0.yaml
 │   └── tes-1.1.0.yaml
+├── .github/
+│   └── workflows/
+│       └── ci.yml          # GitHub Actions CI pipeline
 ├── helm/
 │   └── ga4gh-sidecar/
 ├── Dockerfile
 ├── docker-compose.yaml
+├── LICENSE                 # Apache 2.0
 └── pyproject.toml
 ```
 
-The current prototype implements `main.py`, `config.py`, `proxy.py`, `merger.py`, and `plugins/`. The remaining modules are part of the GSoC scope.
+The current prototype implements the CI pipeline (`.github`), `main.py`, `config.py`, `proxy.py`, `merger.py`, and `plugins/`. Advanced features like the cache state machine, JSON logging, and connection pooling are currently functioning but embedded in those files; the GSoC scope will refactor them into the fully modular architecture shown above, alongside writing the new attestation and validation modules.
 
 ## License
 
