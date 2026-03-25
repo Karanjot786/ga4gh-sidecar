@@ -308,4 +308,4 @@ The current prototype implements `main.py`, `config.py`, `proxy.py`, `merger.py`
 
 ## License
 
-Apache 2.0
+[Apache 2.0](LICENSE)
