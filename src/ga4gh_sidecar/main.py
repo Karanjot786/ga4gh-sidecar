@@ -66,6 +66,7 @@ BUILTIN_PLUGINS: dict[str, type[SidecarPlugin]] = {
 _config: SidecarConfig | None = None
 _cache: ServiceInfoCache | None = None
 _proxy_client: httpx.AsyncClient | None = None
+_poll_client: httpx.AsyncClient | None = None
 _plugin_chain: PluginChain = PluginChain()
 
 
@@ -92,7 +93,7 @@ def _build_plugin_chain(config: SidecarConfig) -> PluginChain:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown logic."""
-    global _config, _cache, _proxy_client, _plugin_chain
+    global _config, _cache, _proxy_client, _poll_client, _plugin_chain
 
     # Load configuration
     _config = _load_config()
@@ -116,6 +117,7 @@ async def lifespan(app: FastAPI):
     _cache = ServiceInfoCache(
         sidecar_config=_config.service_info.to_dict(),
         backend_url=_config.backend_url,
+        client=_poll_client,
         poll_interval=_config.merge.poll_interval_seconds,
         backend_timeout=_config.merge.backend_timeout_seconds,
         fallback=_config.merge.fallback,
@@ -143,6 +145,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     await _cache.stop_polling()
     await _proxy_client.aclose()
+    await _poll_client.aclose()
     logger.info("Sidecar stopped.")
 
 

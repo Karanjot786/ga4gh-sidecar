@@ -144,12 +144,14 @@ class ServiceInfoCache:
         self,
         sidecar_config: dict[str, Any],
         backend_url: str,
+        client: httpx.AsyncClient,
         poll_interval: int = 30,
         backend_timeout: int = 5,
         fallback: str = "serve_config_only",
     ):
         self._sidecar_config = sidecar_config
         self._backend_url = backend_url.rstrip("/")
+        self._client = client
         self._poll_interval = poll_interval
         self._backend_timeout = backend_timeout
         self._fallback = fallback
